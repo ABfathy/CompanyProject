@@ -118,7 +118,10 @@ public class EmployeesController : Controller
             return NotFound();
         }
 
-        var employee = await _context.Employees.FindAsync(id);
+        var employee = await _context.Employees
+            .Include(e => e.Department)
+            .FirstOrDefaultAsync(m => m.Id == id);
+            
         if (employee == null)
         {
             return NotFound();
@@ -137,14 +140,43 @@ public class EmployeesController : Controller
             return NotFound();
         }
 
+        // Debug information
+        Console.WriteLine("Edit POST action triggered");
+        Console.WriteLine($"Model is valid: {ModelState.IsValid}");
+        Console.WriteLine($"Department ID: {employee.DepartmentId}");
+        
+        // The validation might fail for DepartmentId even though it has a value
+        // This could be due to a model binding issue, so let's manually validate it
+        if (employee.DepartmentId > 0)
+        {
+            // Ensure that any error related to DepartmentId is removed
+            ModelState.Remove("Department");
+            ModelState.Remove("DepartmentId");
+        }
+        
+        if (!ModelState.IsValid)
+        {
+            foreach (var state in ModelState)
+            {
+                if (state.Value.Errors.Count > 0)
+                {
+                    Console.WriteLine($"Error in {state.Key}: {string.Join(", ", state.Value.Errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+        }
+
+        // Re-check model state after manually handling DepartmentId
         if (ModelState.IsValid)
         {
             try
             {
+                Console.WriteLine("Updating employee in database");
                 _context.Update(employee);
                 await _context.SaveChangesAsync();
+                Console.WriteLine("Employee updated successfully");
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!EmployeeExists(employee.Id))
                 {
@@ -152,11 +184,22 @@ public class EmployeesController : Controller
                 }
                 else
                 {
+                    // Log the exception
+                    Console.WriteLine($"Concurrency error: {ex.Message}");
                     throw;
                 }
             }
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Error updating employee: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                ModelState.AddModelError("", "Error updating employee: " + ex.Message);
+            }
         }
+        
+        // If we get here, something failed, so redisplay the form
+        Console.WriteLine("Redisplaying form");
         ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
         return View(employee);
     }
