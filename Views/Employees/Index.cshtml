@@ -1,0 +1,60 @@
+@model IEnumerable<EmployeeManagementMVC.Models.Employee>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<div class="container">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="bi bi-people me-2"></i>Employees</h3>
+            <a asp-action="Create" class="btn btn-light">
+                <i class="bi bi-person-plus me-1"></i>Create New Employee
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th><i class="bi bi-person me-1"></i>@Html.DisplayNameFor(model => model.FirstName)</th>
+                            <th>@Html.DisplayNameFor(model => model.LastName)</th>
+                            <th><i class="bi bi-briefcase me-1"></i>@Html.DisplayNameFor(model => model.Position)</th>
+                            <th><i class="bi bi-calendar-date me-1"></i>@Html.DisplayNameFor(model => model.HireDate)</th>
+                            <th><i class="bi bi-currency-dollar me-1"></i>@Html.DisplayNameFor(model => model.Salary)</th>
+                            <th><i class="bi bi-envelope me-1"></i>@Html.DisplayNameFor(model => model.Email)</th>
+                            <th><i class="bi bi-building me-1"></i>@Html.DisplayNameFor(model => model.Department)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model) {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Position)</td>
+                            <td>@Html.DisplayFor(modelItem => item.HireDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Salary)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Department.Name)</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil-square me-1"></i>Edit
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-info-circle me-1"></i>Details
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

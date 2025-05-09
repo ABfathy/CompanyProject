@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container">
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-12 mt-5 text-center">
+            <h1 class="display-4 fw-bold mb-4">Company System</h1>
+            <p class="lead mb-4">A sleek, modern solution for managing your company's workforce and organizational structure.</p>
+            
+            @if (User.Identity.IsAuthenticated)
+            {
+                <!-- Show action buttons for authenticated users -->
+                <div class="d-flex justify-content-center gap-3 mt-5">
+                    <a asp-controller="Employees" asp-action="Index" class="btn btn-primary btn-lg">
+                        <i class="bi bi-people me-2"></i>View Employees
+                    </a>
+                    <a asp-controller="Departments" asp-action="Index" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-building me-2"></i>Explore Departments
+                    </a>
+                </div>
+            }
+            else
+            {
+                <!-- Show login/register buttons for anonymous users -->
+                <div class="d-flex justify-content-center gap-3 mt-5">
+                    <a class="btn btn-primary btn-lg" href="/Identity/Account/Login">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                    <a class="btn btn-outline-primary btn-lg" href="/Identity/Account/Register">
+                        <i class="bi bi-person-plus me-2"></i>Register
+                    </a>
+                </div>
+                <div class="alert alert-info mt-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    You must login or register to access the Company System.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row mt-5 pt-5">
+        <div class="col-12 text-center mb-5">
+            <h2 class="fw-bold">Manage Your Company with Ease</h2>
+            <p class="text-muted">Everything you need in one place</p>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-people-fill text-primary fs-1 mb-3"></i>
+                    <h3 class="h4 mb-3">Employee Management</h3>
+                    <p class="text-muted mb-4">Add, edit, and manage employee information including contact details and department assignments.</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Employees" asp-action="Create" class="btn btn-sm btn-outline-primary">Add Employee</a>
+                    }
+                    else
+                    {
+                        <a href="/Identity/Account/Login" class="btn btn-sm btn-outline-primary">Login to Access</a>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-building text-success fs-1 mb-3"></i>
+                    <h3 class="h4 mb-3">Department Organization</h3>
+                    <p class="text-muted mb-4">Structure your organization with departments and assign employees to appropriate teams.</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Departments" asp-action="Create" class="btn btn-sm btn-outline-success">Create Department</a>
+                    }
+                    else
+                    {
+                        <a href="/Identity/Account/Login" class="btn btn-sm btn-outline-success">Login to Access</a>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-graph-up text-info fs-1 mb-3"></i>
+                    <h3 class="h4 mb-3">Data Overview</h3>
+                    <p class="text-muted mb-4">Get a comprehensive view of your organization's structure and resource distribution.</p>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Home" asp-action="Privacy" class="btn btn-sm btn-outline-info">Learn More</a>
+                    }
+                    else
+                    {
+                        <a href="/Identity/Account/Login" class="btn btn-sm btn-outline-info">Login to Access</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
