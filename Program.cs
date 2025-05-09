@@ -38,24 +38,8 @@ builder.Services.AddControllersWithViews();
 // Configure HttpsRedirection with default options or minimal configuration
 builder.Services.AddHttpsRedirection(options =>
 {
-    // Default configuration is often sufficient.
-    // If a specific port needs to be set, it would be done here,
-    // but we are reverting to a more default state.
-    // options.HttpsPort = 7189; // Example if a specific port was needed
 });
 
-// Option 2: Configure Forwarded Headers (if running behind a reverse proxy)
-/*
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-        Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | 
-        Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
-    // If your proxy is not on localhost, you might need to clear known proxies/networks:
-    // options.KnownProxies.Clear();
-    // options.KnownNetworks.Clear();
-});
-*/
 
 var app = builder.Build();
 
@@ -67,15 +51,9 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-// If you configured ForwardedHeadersOptions, add the middleware here:
-// Make sure UseForwardedHeaders is one of the first middleware components.
-/*
-app.UseForwardedHeaders();
-*/
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

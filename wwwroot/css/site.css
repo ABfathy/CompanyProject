@@ -136,6 +136,12 @@ body {
   color: #fff !important;
 }
 
+.card-header.bg-danger {
+  background-color: rgba(91, 33, 182, 0.8) !important;
+  background-image: linear-gradient(135deg, rgba(91, 33, 182, 0.8), rgba(76, 29, 149, 0.9)) !important;
+  border-bottom: 1px solid rgba(91, 33, 182, 0.3) !important;
+}
+
 .card-body {
   display: flex;
   flex-direction: column;
@@ -530,8 +536,18 @@ form .btn-primary:focus-visible,
 }
 
 .btn-danger {
-  background-color: var(--danger);
-  border-color: var(--danger);
+  background-color: var(--dark-purple);
+  border-color: var(--dark-purple);
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #4c1d95;
+  border-color: #4c1d95;
+  color: white !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(91, 33, 182, 0.5);
 }
 
 .btn-info {
@@ -727,7 +743,7 @@ a:hover .bi, button:hover .bi {
 }
 
 .text-danger {
-  color: var(--danger) !important;
+  color: #d8b4fe !important;
 }
 /* Authentication forms */
 .auth-container {
@@ -788,6 +804,13 @@ a:hover .bi, button:hover .bi {
 .alert-info {
   background-color: rgba(99, 102, 241, 0.2);
   color: #a5b4fc;
+}
+
+/* Custom alert-danger styling that's more cohesive with the theme */
+.alert-danger {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: #d8b4fe;
+  border-left: 4px solid var(--dark-purple);
 }
 
 /* Identity pages specific styling */
@@ -884,6 +907,10 @@ a:hover .bi, button:hover .bi {
   padding-left: 1rem;
 }
 
+.delete-confirm-container h3.text-danger {
+  color: #d8b4fe !important;
+}
+
 /* White text override for all pages */
 .table th, 
 .table td,
@@ -899,6 +926,16 @@ a:hover .bi, button:hover .bi {
 .delete-page dt,
 .delete-page dd {
   color: #ffffff !important;
+}
+
+/* Fix for delete button icon color */
+.btn-danger .bi {
+  color: white !important;
+}
+
+.btn-danger:hover .bi {
+  color: white !important;
+  transform: scale(1.2) rotate(5deg);
 }
 
 /* Override for all buttons to ensure consistency */
