@@ -47,6 +47,9 @@ body {
   --danger: #ef4444;
   --warning: #f59e0b;
   --info: #6366f1;
+  --purple: #8b5cf6; /* Purple color for employees button */
+  --purple-dark: #7c3aed;
+  --dark-purple: #5b21b6; /* New dark purple color for department header */
 }
 
 /* Navbar styling */
@@ -110,15 +113,16 @@ body {
   background-color: var(--dark);
   border: 1px solid #2d2d2d;
   border-radius: 8px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .card-header {
@@ -170,25 +174,21 @@ body {
 .btn {
   border-radius: 6px;
   padding: 0.5rem 1rem;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.1);
-  opacity: 0;
-  transition: opacity 0.2s ease;
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
-.btn:active::after {
-  opacity: 1;
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary, 
@@ -302,6 +302,169 @@ form .btn-primary:focus-visible,
   border-color: var(--info);
   color: white;
   transform: translateY(-2px);
+}
+
+/* Purple button variant */
+.btn-purple {
+  background-color: var(--purple);
+  border-color: var(--purple);
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.btn-purple:hover {
+  background-color: var(--purple-dark);
+  border-color: var(--purple-dark);
+  color: white !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
+}
+
+.btn-purple:active,
+.btn-purple:focus,
+.btn-purple:focus-visible {
+  background-color: var(--purple-dark) !important;
+  border-color: var(--purple-dark) !important;
+  box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.5) !important;
+  color: white !important;
+}
+
+.btn-purple .bi {
+  color: white !important;
+}
+
+/* Dark purple button variant */
+.btn-dark-purple {
+  background-color: var(--dark-purple);
+  border-color: var(--dark-purple);
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.btn-dark-purple:hover {
+  background-color: #4c1d95;
+  border-color: #4c1d95;
+  color: white !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(91, 33, 182, 0.5);
+}
+
+.btn-dark-purple:active,
+.btn-dark-purple:focus,
+.btn-dark-purple:focus-visible {
+  background-color: #4c1d95 !important;
+  border-color: #4c1d95 !important;
+  box-shadow: 0 0 0 0.25rem rgba(91, 33, 182, 0.5) !important;
+  color: white !important;
+}
+
+.btn-dark-purple .bi {
+  color: white !important;
+}
+
+/* Outline dark purple button variant */
+.btn-outline-dark-purple {
+  color: var(--dark-purple);
+  border-color: var(--dark-purple);
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-dark-purple:hover {
+  background-color: var(--dark-purple);
+  border-color: var(--dark-purple);
+  color: white !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(91, 33, 182, 0.5);
+}
+
+.btn-outline-dark-purple:active,
+.btn-outline-dark-purple:focus,
+.btn-outline-dark-purple:focus-visible {
+  background-color: #4c1d95 !important;
+  border-color: #4c1d95 !important;
+  box-shadow: 0 0 0 0.25rem rgba(91, 33, 182, 0.5) !important;
+  color: white !important;
+}
+
+.btn-outline-dark-purple .bi {
+  color: var(--dark-purple) !important;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-dark-purple:hover .bi {
+  color: white !important;
+  transform: scale(1.2);
+}
+
+/* Pulse animation for buttons */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+.btn-purple:hover {
+  animation: pulse 1.5s infinite;
+}
+
+/* Action buttons with white icons */
+.btn-group .btn-sm .bi,
+.btn-outline-primary .bi,
+.btn-outline-info .bi, 
+.btn-outline-success .bi,
+.btn-outline-danger .bi,
+.btn-outline-secondary .bi {
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.btn-group .btn-sm:hover .bi,
+.btn-outline-primary:hover .bi,
+.btn-outline-info:hover .bi,
+.btn-outline-success:hover .bi,
+.btn-outline-danger:hover .bi,
+.btn-outline-secondary:hover .bi {
+  color: white !important;
+  transform: scale(1.2);
+}
+
+/* Enhanced action buttons styling */
+.action-btn {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin: 0 2px;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn .bi {
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover .bi {
+  color: white !important;
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Background colors */
+.bg-purple {
+  background-color: var(--purple) !important;
+}
+
+.bg-dark-purple {
+  background-color: var(--dark-purple) !important;
+  background-image: linear-gradient(135deg, var(--dark-purple), #4c1d95) !important;
+  border-bottom: 1px solid #4c1d95 !important;
 }
 
 /* Login/Register button styling */
@@ -755,5 +918,60 @@ form .btn-primary:focus-visible {
   color: white !important;
   background-color: var(--primary-dark) !important;
   border-color: var(--primary-dark) !important;
+}
+
+/* Analytics page styling */
+.bg-light-dark {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.department-card {
+  border-left: 4px solid var(--dark-purple) !important;
+  transition: all 0.3s ease;
+  opacity: 0.9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.department-card.animated {
+  opacity: 1;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.department-card .card-header {
+  background-color: rgba(91, 33, 182, 0.1) !important;
+  border-bottom: 1px solid rgba(91, 33, 182, 0.2) !important;
+}
+
+.analytics-icon {
+  font-size: 2.5rem;
+  color: var(--dark-purple);
+  margin-bottom: 1rem;
+}
+
+.badge.rounded-pill {
+  padding: 0.35rem 0.9rem;
+  font-weight: 500;
+}
+
+.collapse {
+  transition: all 0.3s ease;
+}
+
+/* Highlight departments on hover */
+.department-card:hover {
+  border-left: 4px solid var(--purple) !important;
+  background-color: rgba(91, 33, 182, 0.05);
+}
+
+/* Employee row animations */
+.employee-row {
+  transition: all 0.3s ease;
+}
+
+.employee-row:hover {
+  background-color: rgba(91, 33, 182, 0.05) !important;
 }
 

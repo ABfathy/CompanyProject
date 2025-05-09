@@ -12,10 +12,10 @@
             {
                 <!-- Show action buttons for authenticated users -->
                 <div class="d-flex justify-content-center gap-3 mt-5">
-                    <a asp-controller="Employees" asp-action="Index" class="btn btn-primary btn-lg">
+                    <a asp-controller="Employees" asp-action="Index" class="btn btn-dark-purple btn-lg">
                         <i class="bi bi-people me-2"></i>View Employees
                     </a>
-                    <a asp-controller="Departments" asp-action="Index" class="btn btn-outline-primary btn-lg">
+                    <a asp-controller="Departments" asp-action="Index" class="btn btn-outline-dark-purple btn-lg">
                         <i class="bi bi-building me-2"></i>Explore Departments
                     </a>
                 </div>
@@ -24,10 +24,10 @@
             {
                 <!-- Show login/register buttons for anonymous users -->
                 <div class="d-flex justify-content-center gap-3 mt-5">
-                    <a class="btn btn-primary btn-lg" href="/Identity/Account/Login">
+                    <a class="btn btn-dark-purple btn-lg" href="/Identity/Account/Login">
                         <i class="bi bi-box-arrow-in-right me-2"></i>Login
                     </a>
-                    <a class="btn btn-outline-primary btn-lg" href="/Identity/Account/Register">
+                    <a class="btn btn-outline-dark-purple btn-lg" href="/Identity/Account/Register">
                         <i class="bi bi-person-plus me-2"></i>Register
                     </a>
                 </div>
@@ -89,7 +89,7 @@
                     <p class="text-muted mb-4">Get a comprehensive view of your organization's structure and resource distribution.</p>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <a asp-controller="Home" asp-action="Privacy" class="btn btn-sm btn-outline-info">Learn More</a>
+                        <a asp-controller="Analytics" asp-action="Index" class="btn btn-sm btn-outline-info">View Organization</a>
                     }
                     else
                     {

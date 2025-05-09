@@ -1,0 +1,135 @@
+@model EmployeeManagementMVC.Models.DepartmentAnalyticsViewModel
+
+@{
+    ViewData["Title"] = "Department Details";
+}
+
+<div class="container">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark-purple text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="bi bi-building me-2"></i>Department Details: @Model.Name</h3>
+            <a asp-action="Index" class="btn btn-light">
+                <i class="bi bi-arrow-left me-1"></i>Back to Overview
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light-dark mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-success"><i class="bi bi-people me-2"></i>Employees</h5>
+                            <h2 class="display-4 fw-bold">@Model.EmployeeCount</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light-dark mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-info"><i class="bi bi-currency-dollar me-2"></i>Total Salary</h5>
+                            <h2 class="display-4 fw-bold">$@Model.TotalSalary.ToString("N0")</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light-dark mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-warning"><i class="bi bi-calculator me-2"></i>Average Salary</h5>
+                            <h2 class="display-4 fw-bold">$@Model.AverageSalary.ToString("N0")</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="department-details mt-4">
+                <h4 class="mb-3">Department Information</h4>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card bg-light-dark">
+                            <div class="card-body">
+                                <h5 class="card-title">@Model.Name</h5>
+                                <p class="card-text">@Model.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="employees-list mt-5">
+                <h4 class="mb-3">
+                    <i class="bi bi-people me-2"></i>Employees
+                    <a asp-controller="Employees" asp-action="Create" class="btn btn-sm btn-outline-success float-end">
+                        <i class="bi bi-person-plus me-1"></i>Add Employee
+                    </a>
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-person me-1"></i>Name</th>
+                                <th><i class="bi bi-briefcase me-1"></i>Position</th>
+                                <th><i class="bi bi-calendar-date me-1"></i>Hire Date</th>
+                                <th><i class="bi bi-currency-dollar me-1"></i>Salary</th>
+                                <th><i class="bi bi-envelope me-1"></i>Email</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Employees.Count > 0)
+                            {
+                                @foreach (var employee in Model.Employees)
+                                {
+                                    <tr class="employee-row">
+                                        <td class="fw-bold">@employee.FirstName @employee.LastName</td>
+                                        <td>@employee.Position</td>
+                                        <td>@employee.HireDate.ToShortDateString()</td>
+                                        <td>$@employee.Salary.ToString("N0")</td>
+                                        <td>@employee.Email</td>
+                                        <td class="text-end">
+                                            <div class="btn-group">
+                                                <a asp-controller="Employees" asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-primary action-btn">
+                                                    <i class="bi bi-pencil-square me-1"></i>Edit
+                                                </a>
+                                                <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-info action-btn">
+                                                    <i class="bi bi-info-circle me-1"></i>Details
+                                                </a>
+                                                <a asp-controller="Employees" asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-danger action-btn">
+                                                    <i class="bi bi-trash me-1"></i>Delete
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center">No employees in this department</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation to employee rows
+            const rows = document.querySelectorAll('.employee-row');
+            
+            rows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, 50 * index);
+            });
+        });
+    </script>
+}
