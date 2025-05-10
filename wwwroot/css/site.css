@@ -1012,3 +1012,7 @@ form .btn-primary:focus-visible {
   background-color: rgba(91, 33, 182, 0.05) !important;
 }
 
+.analytics {
+  color: white !important;
+}
+
