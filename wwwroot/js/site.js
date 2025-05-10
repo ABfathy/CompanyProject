@@ -1,29 +1,14 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// site.js - Enhanced UI interactions for dark theme
-document.addEventListener('DOMContentLoaded', function () {
-    // Add active class to current nav item
+﻿document.addEventListener('DOMContentLoaded', function () {
     highlightCurrentNavItem();
-    
-    // Initialize tooltips
     initTooltips();
-    
-    // Add animation effects to cards
     animateCards();
-    
-    // Enhance form validations with animations
     enhanceFormValidation();
-    
-    // Add subtle hover effects
     addHoverEffects();
 });
 
 function highlightCurrentNavItem() {
-    // Get current URL path
     const path = window.location.pathname.toLowerCase();
     
-    // Find all nav links and check if they match the current path
     document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
         const href = link.getAttribute('href')?.toLowerCase();
         if (href && (path === href || path.startsWith(href) && href !== '/')) {
@@ -34,7 +19,6 @@ function highlightCurrentNavItem() {
 }
 
 function initTooltips() {
-    // Initialize Bootstrap tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -42,7 +26,6 @@ function initTooltips() {
 }
 
 function animateCards() {
-    // Animate cards on page load
     const cards = document.querySelectorAll('.card');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
@@ -57,7 +40,6 @@ function animateCards() {
 }
 
 function enhanceFormValidation() {
-    // Add visual feedback for form validation
     document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', function (event) {
             if (!form.checkValidity()) {
@@ -67,7 +49,6 @@ function enhanceFormValidation() {
             
             form.classList.add('was-validated');
             
-            // Shake effect for invalid inputs
             form.querySelectorAll(':invalid').forEach(input => {
                 input.classList.add('shake-animation');
                 setTimeout(() => {
@@ -76,7 +57,6 @@ function enhanceFormValidation() {
             });
         });
         
-        // Add validation styles when input changes
         form.querySelectorAll('input, select, textarea').forEach(input => {
             input.addEventListener('blur', function () {
                 if (this.checkValidity()) {
@@ -92,14 +72,12 @@ function enhanceFormValidation() {
 }
 
 function addHoverEffects() {
-    // Add hover effects to buttons and links
     document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('mouseenter', function() {
             this.style.transition = 'all 0.3s ease';
         });
     });
     
-    // Add ripple effect to cards
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-5px)';
@@ -114,7 +92,6 @@ function addHoverEffects() {
     });
 }
 
-// Add CSS for animations
 const style = document.createElement('style');
 style.textContent = `
     .shake-animation {

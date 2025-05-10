@@ -43,9 +43,9 @@ namespace EmployeeManagementMVC.Models
 
         [Required(ErrorMessage = "Department is required.")]
         [Display(Name = "Department")]
-        public int DepartmentId { get; set; } // Foreign key to Department
+        public int DepartmentId { get; set; } 
 
-        [ForeignKey("DepartmentId")] // Explicitly define foreign key relationship
-        public Department Department { get; set; } // Navigation property
+        [ForeignKey("DepartmentId")] 
+        public Department Department { get; set; } 
     }
 }

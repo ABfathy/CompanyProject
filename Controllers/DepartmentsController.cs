@@ -1,4 +1,3 @@
-// Controllers/DepartmentsController.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Data;
