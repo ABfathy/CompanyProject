@@ -2,209 +2,149 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Data;
-using EmployeeManagementMVC.Models; 
-using System.Threading.Tasks;
-using System.Linq;
+using EmployeeManagementMVC.Models;
 using Microsoft.AspNetCore.Authorization;
 
-[Authorize]
-public class DepartmentsController : Controller
+namespace EmployeeManagementMVC.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    // Constructor to inject the DbContext
-    public DepartmentsController(ApplicationDbContext context)
+    [Authorize]
+    public class DepartmentsController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    // GET: Departments
-    // Displays a list of all departments
-    public async Task<IActionResult> Index()
-    {
-        // Retrieve all departments from the database asynchronously
-        var departments = await _context.Departments.ToListAsync();
-        // Pass the list of departments to the Index view
-        return View(departments);
-    }
-
-    // GET: Departments/Details/5
-    // Displays the details of a specific department
-    public async Task<IActionResult> Details(int? id)
-    {
-        // Check if an ID was provided
-        if (id == null)
+        public DepartmentsController(ApplicationDbContext context)
         {
-            return NotFound(); // Return 404 if no ID is provided
+            _context = context;
         }
 
-        // Find the department by ID asynchronously
-        var department = await _context.Departments
-            .FirstOrDefaultAsync(m => m.Id == id);
-
-        // Check if the department was found
-        if (department == null)
+        public async Task<IActionResult> Index()
         {
-            return NotFound(); // Return 404 if department is not found
+            return View(await _context.Departments.ToListAsync());
         }
 
-        // Pass the department object to the Details view
-        return View(department);
-    }
-
-    // GET: Departments/Create
-    // Displays the form to create a new department
-    public IActionResult Create()
-    {
-        return View(); // Simply return the Create view
-    }
-
-    // POST: Departments/Create
-    // Handles the submission of the new department form
-    [HttpPost]
-    [ValidateAntiForgeryToken] // Protects against cross-site request forgery attacks
-    public async Task<IActionResult> Create([Bind("Id,Name,Description")] Department department)
-    {
-        // Check if the submitted model is valid based on data annotations
-        if (ModelState.IsValid)
+        public async Task<IActionResult> Details(int? id)
         {
-            // Add the new department to the DbContext
-            _context.Add(department);
-            // Save the changes to the database asynchronously
-            await _context.SaveChangesAsync();
-            // Redirect to the Index action after successful creation
-            return RedirectToAction(nameof(Index));
-        }
-        // If the model is not valid, return the Create view with validation errors
-        return View(department);
-    }
+            if (id == null)
+                return NotFound();
 
-    // GET: Departments/Edit/5
-    // Displays the form to edit an existing department
-    public async Task<IActionResult> Edit(int? id)
-    {
-        // Check if an ID was provided
-        if (id == null)
-        {
-            return NotFound();
+            var department = await _context.Departments
+                .Include(d => d.Employees)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (department == null)
+                return NotFound();
+
+            return View(department);
         }
 
-        // Find the department by ID asynchronously
-        var department = await _context.Departments.FindAsync(id);
-
-        // Check if the department was found
-        if (department == null)
+        public IActionResult Create()
         {
-            return NotFound();
+            return View();
         }
 
-        // Pass the department object to the Edit view
-        return View(department);
-    }
-
-    // POST: Departments/Edit/5
-    // Handles the submission of the edit department form
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Department department)
-    {
-        // Check if the provided ID matches the department ID
-        if (id != department.Id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Department department)
         {
-            return NotFound();
-        }
-
-        // Check if the submitted model is valid
-        if (ModelState.IsValid)
-        {
-            try
+            if (ModelState.IsValid)
             {
-                // Update the department in the DbContext
-                _context.Update(department);
-                // Save the changes to the database asynchronously
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                // Handle concurrency conflicts (if the record was changed by someone else)
-                if (!DepartmentExists(department.Id))
+                try
                 {
-                    return NotFound();
+                    _context.Add(department);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                else
+                catch (Exception ex)
                 {
-                    throw; // Re-throw the exception if it's not a "not found" issue
+                    ModelState.AddModelError("", $"Error creating department: {ex.Message}");
                 }
             }
-            // Redirect to the Index action after successful update
-            return RedirectToAction(nameof(Index));
-        }
-        // If the model is not valid, return the Edit view with validation errors
-        return View(department);
-    }
-
-    // GET: Departments/Delete/5
-    // Displays the confirmation page to delete a department
-    public async Task<IActionResult> Delete(int? id)
-    {
-        // Check if an ID was provided
-        if (id == null)
-        {
-            return NotFound();
+            return View(department);
         }
 
-        // Find the department by ID, including related employees for display (optional but helpful)
-        var department = await _context.Departments
-            .Include(d => d.Employees) // Include employees to check if the department has any
-            .FirstOrDefaultAsync(m => m.Id == id);
-
-        // Check if the department was found
-        if (department == null)
+        public async Task<IActionResult> Edit(int? id)
         {
-            return NotFound();
+            if (id == null)
+                return NotFound();
+
+            var department = await _context.Departments.FindAsync(id);
+            
+            if (department == null)
+                return NotFound();
+                
+            return View(department);
         }
 
-        return View(department); // Pass the department to the Delete view
-    }
-
-    // POST: Departments/Delete/5
-    // Handles the confirmation of deleting a department
-    [HttpPost, ActionName("Delete")] // Specify the action name for routing
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        // Find the department by ID
-        var department = await _context.Departments.FindAsync(id);
-
-        // Check if the department exists before attempting to remove
-        if (department != null)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Department department)
         {
-             // Check if the department has any employees before deleting (based on OnDelete(DeleteBehavior.Restrict))
-            var employeeCount = await _context.Employees.CountAsync(e => e.DepartmentId == id);
-            if (employeeCount > 0)
+            if (id != department.Id)
+                return NotFound();
+
+            if (ModelState.IsValid)
             {
-                // Add a model error if the department has employees and cannot be deleted
-                ModelState.AddModelError("", "Cannot delete this department because it has associated employees.");
-                // Re-fetch the department with employees to display on the delete view again
-                 department = await _context.Departments
-                    .Include(d => d.Employees)
-                    .FirstOrDefaultAsync(m => m.Id == id);
-                 return View("Delete", department); // Return the delete view with the error
+                try
+                {
+                    _context.Update(department);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!DepartmentExists(department.Id))
+                        return NotFound();
+                    
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error updating department: {ex.Message}");
+                }
+            }
+            return View(department);
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var department = await _context.Departments
+                .Include(d => d.Employees)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (department == null)
+                return NotFound();
+
+            return View(department);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var department = await _context.Departments
+                .Include(d => d.Employees)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (department == null)
+                return RedirectToAction(nameof(Index));
+
+            if (department.Employees != null && department.Employees.Any())
+            {
+                ModelState.AddModelError("", $"Cannot delete department '{department.Name}' because it has {department.Employees.Count()} associated employees.");
+                return View(department);
             }
 
-            // Remove the department from the DbContext
             _context.Departments.Remove(department);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
-        // Save the changes to the database asynchronously
-        await _context.SaveChangesAsync();
-        // Redirect to the Index action after successful deletion
-        return RedirectToAction(nameof(Index));
-    }
-
-    // Helper method to check if a department exists
-    private bool DepartmentExists(int id)
-    {
-        return _context.Departments.Any(e => e.Id == id);
+        private bool DepartmentExists(int id)
+        {
+            return _context.Departments.Any(e => e.Id == id);
+        }
     }
 }

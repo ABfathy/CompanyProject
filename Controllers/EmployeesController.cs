@@ -4,241 +4,156 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagementMVC.Data;
 using EmployeeManagementMVC.Models;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
-[Authorize]
-public class EmployeesController : Controller
+namespace EmployeeManagementMVC.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public EmployeesController(ApplicationDbContext context)
+    [Authorize]
+    public class EmployeesController : Controller
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    // GET: Employees
-    public async Task<IActionResult> Index()
-    {
-        var employees = _context.Employees.Include(e => e.Department);
-        return View(await employees.ToListAsync());
-    }
-
-    // GET: Employees/Details/5
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null)
+        public EmployeesController(ApplicationDbContext context)
         {
-            return NotFound();
+            _context = context;
         }
 
-        var employee = await _context.Employees
-            .Include(e => e.Department)
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (employee == null)
+        public async Task<IActionResult> Index()
         {
-            return NotFound();
+            var employees = await _context.Employees.Include(e => e.Department).ToListAsync();
+            return View(employees);
         }
 
-        return View(employee);
-    }
-
-    // GET: Employees/Create
-    public IActionResult Create()
-    {
-        ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
-        return View();
-    }
-
-    // POST: Employees/Create
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Position,HireDate,Salary,Email,PhoneNumber,DepartmentId")] Employee employee)
-    {
-        // Debug information
-        Console.WriteLine("Create POST action triggered");
-        Console.WriteLine($"Model is valid: {ModelState.IsValid}");
-        Console.WriteLine($"Department ID: {employee.DepartmentId}");
-        
-        // The validation is failing for DepartmentId even though it has a value
-        // This could be due to a model binding issue, so let's manually validate it
-        if (employee.DepartmentId > 0)
+        public async Task<IActionResult> Details(int? id)
         {
-            // Ensure that any error related to DepartmentId is removed
-            ModelState.Remove("Department");
-            ModelState.Remove("DepartmentId");
+            if (id == null)
+                return NotFound();
+
+            var employee = await _context.Employees
+                .Include(e => e.Department)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (employee == null)
+                return NotFound();
+
+            return View(employee);
         }
-        
-        if (!ModelState.IsValid)
+
+        public IActionResult Create()
         {
-            foreach (var state in ModelState)
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Position,HireDate,Salary,Email,PhoneNumber,DepartmentId")] Employee employee)
+        {
+            if (employee.DepartmentId > 0)
             {
-                if (state.Value.Errors.Count > 0)
-                {
-                    Console.WriteLine($"Error in {state.Key}: {string.Join(", ", state.Value.Errors.Select(e => e.ErrorMessage))}");
-                }
+                ModelState.Remove("Department");
             }
-        }
-        
-        // Re-check model state after manually handling DepartmentId
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                Console.WriteLine("Adding employee to database");
-                // Add the employee to the database
-                _context.Employees.Add(employee);
-                await _context.SaveChangesAsync();
-                Console.WriteLine("Employee saved successfully");
-                // Redirect to the index page upon successful creation
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine($"Error saving employee: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                ModelState.AddModelError("", "Error creating employee: " + ex.Message);
-            }
-        }
-        
-        // If we get here, something failed, so redisplay the form
-        Console.WriteLine("Redisplaying form");
-        // Make sure to populate the dropdown with departments
-        ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
-        return View(employee);
-    }
-
-    // GET: Employees/Edit/5
-    public async Task<IActionResult> Edit(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var employee = await _context.Employees
-            .Include(e => e.Department)
-            .FirstOrDefaultAsync(m => m.Id == id);
             
-        if (employee == null)
-        {
-            return NotFound();
-        }
-        ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
-        return View(employee);
-    }
-
-    // POST: Employees/Edit/5
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Position,HireDate,Salary,Email,PhoneNumber,DepartmentId")] Employee employee)
-    {
-        if (id != employee.Id)
-        {
-            return NotFound();
-        }
-
-        // Debug information
-        Console.WriteLine("Edit POST action triggered");
-        Console.WriteLine($"Model is valid: {ModelState.IsValid}");
-        Console.WriteLine($"Department ID: {employee.DepartmentId}");
-        
-        // The validation might fail for DepartmentId even though it has a value
-        // This could be due to a model binding issue, so let's manually validate it
-        if (employee.DepartmentId > 0)
-        {
-            // Ensure that any error related to DepartmentId is removed
-            ModelState.Remove("Department");
-            ModelState.Remove("DepartmentId");
-        }
-        
-        if (!ModelState.IsValid)
-        {
-            foreach (var state in ModelState)
+            if (ModelState.IsValid)
             {
-                if (state.Value.Errors.Count > 0)
+                try
                 {
-                    Console.WriteLine($"Error in {state.Key}: {string.Join(", ", state.Value.Errors.Select(e => e.ErrorMessage))}");
+                    _context.Add(employee);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error creating employee: {ex.Message}");
                 }
             }
+            
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            return View(employee);
         }
 
-        // Re-check model state after manually handling DepartmentId
-        if (ModelState.IsValid)
+        public async Task<IActionResult> Edit(int? id)
         {
-            try
+            if (id == null)
+                return NotFound();
+
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+                return NotFound();
+                
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            return View(employee);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Position,HireDate,Salary,Email,PhoneNumber,DepartmentId")] Employee employee)
+        {
+            if (id != employee.Id)
+                return NotFound();
+
+            if (employee.DepartmentId > 0)
             {
-                Console.WriteLine("Updating employee in database");
-                _context.Update(employee);
-                await _context.SaveChangesAsync();
-                Console.WriteLine("Employee updated successfully");
-                return RedirectToAction(nameof(Index));
+                ModelState.Remove("Department");
             }
-            catch (DbUpdateConcurrencyException ex)
+
+            if (ModelState.IsValid)
             {
-                if (!EmployeeExists(employee.Id))
+                try
                 {
-                    return NotFound();
+                    _context.Update(employee);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                else
+                catch (DbUpdateConcurrencyException)
                 {
-                    // Log the exception
-                    Console.WriteLine($"Concurrency error: {ex.Message}");
+                    if (!EmployeeExists(employee.Id))
+                        return NotFound();
+                    
                     throw;
                 }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error updating employee: {ex.Message}");
+                }
             }
-            catch (Exception ex)
+            
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            return View(employee);
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var employee = await _context.Employees
+                .Include(e => e.Department)
+                .FirstOrDefaultAsync(m => m.Id == id);
+                
+            if (employee == null)
+                return NotFound();
+
+            return View(employee);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee != null)
             {
-                // Log the exception
-                Console.WriteLine($"Error updating employee: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                ModelState.AddModelError("", "Error updating employee: " + ex.Message);
+                _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
             }
+            
+            return RedirectToAction(nameof(Index));
         }
-        
-        // If we get here, something failed, so redisplay the form
-        Console.WriteLine("Redisplaying form");
-        ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
-        return View(employee);
-    }
 
-    // GET: Employees/Delete/5
-    public async Task<IActionResult> Delete(int? id)
-    {
-        if (id == null)
+        private bool EmployeeExists(int id)
         {
-            return NotFound();
+            return _context.Employees.Any(e => e.Id == id);
         }
-
-        var employee = await _context.Employees
-            .Include(e => e.Department)
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (employee == null)
-        {
-            return NotFound();
-        }
-
-        return View(employee);
-    }
-
-    // POST: Employees/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
-    {
-        var employee = await _context.Employees.FindAsync(id);
-        if (employee != null)
-        {
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
-        }
-        return RedirectToAction(nameof(Index));
-    }
-
-    private bool EmployeeExists(int id)
-    {
-        return _context.Employees.Any(e => e.Id == id);
     }
 }
